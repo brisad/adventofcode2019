@@ -1,0 +1,93 @@
+* Advent of Code 2019
+
+My first time doing the Advent of Code problems. I'm currently
+teaching myself Haskell, so this is a good opportunity to get some
+practice with the language.
+
+Run all solutions with =make=:
+#+BEGIN_SRC bash
+$ make
+runhaskell day1.hs < day1.input
+Part One: 3455717
+Part Two: 5180690
+runhaskell day2.hs < day2.input
+Part One: 3224742
+Part Two: 7960
+[...]
+#+END_SRC
+
+** Commentary
+*** Day 1
+Very straightforward. Calculating the fuel in the second part put good
+use of the =iterate= function.
+
+#+BEGIN_SRC haskell
+fuel' :: Int -> Int
+fuel' m = sum $ takeWhile (>0) (iterate f (f m))
+  where f x = x `div` 3 - 2
+#+END_SRC
+
+*** Day 2
+Like in Day 1, this solution also used =iterate= in order to continue
+executing the machine until the halting opcode was found.
+
+I represented a program as list of integers:
+#+BEGIN_SRC haskell
+type Prog = [Int]
+#+END_SRC
+But using a list for something that can be mutated by index isn't very
+nice, and it indeed makes the =exec= function look pretty bad. But for
+this simple problem it was good enough.
+#+BEGIN_SRC haskell
+exec :: State -> State
+exec (n, p) = case p !! n of
+    1 -> (n + 4, mut p c (p !! a + p !! b))
+    2 -> (n + 4, mut p c (p !! a * p !! b))
+    _ -> error "Invalid opcode"
+    where a = p !! (n + 1)
+          b = p !! (n + 2)
+          c = p !! (n + 3)
+#+END_SRC
+
+*** Day 3
+This one required a bit more thought, and I failed in my first
+attempt. I transformed a collection of movements of a wire into a grid
+where occupied squares were marked. I used a list of positions to mark
+the squares. This solution seemed to work, but when applied to the
+real puzzle input I realized the solution wasn't performing well. In
+fact, the generated grids produced _very_ long lists and the program
+wouldn't finish in time for me to be satisfied. Using a list for the
+grid wasn't probably the best either, but I knew there must be a
+better solution. A good lesson for next time is to first look more
+closely at the puzzle input to get a feel for the complexity of the
+problem.
+
+My second attempt instead folded the list of movements into a list of
+line segments instead. These segments could then be paired up in order
+look for intersections between them in order to find the list of
+crossings. This turned up a lot more efficient and solved the problem.
+
+I used two value constructors for the =Segments= type: =Horiz= and
+=Vert=. I chose this to simplify the code for the intersection
+predicate, but I'm not sure it got simpler than a more general segment
+type. I had to enumerate the cases in pattern matches in several
+places in the solution.
+
+Finally, I think it was neat that I could make =Movement= an instance
+of the =Read= class. Then I could parse the provided comma separated
+input by adding square brackets and calling =read= on it.
+#+BEGIN_SRC haskell
+main = do
+    x <- getLine
+    let xs = read $ "[" ++ x ++ "]"
+#+END_SRC
+
+** Day 4
+This problem needed a range of numbers passed through a couple of
+filters. Haskell's point free notation makes this quite expressive.
+
+#+BEGIN_SRC haskell
+solve' :: Int -> Int -> Int
+solve' lo hi = length . filter (any (== 2) . digitCounts) . filter increasing .
+               map show $ [lo..hi]
+#+END_SRC
