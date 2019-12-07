@@ -82,7 +82,7 @@ main = do
     let xs = read $ "[" ++ x ++ "]"
 #+END_SRC
 
-** Day 4
+*** Day 4
 This problem needed a range of numbers passed through a couple of
 filters. Haskell's point free notation makes this quite expressive.
 
@@ -91,3 +91,45 @@ solve' :: Int -> Int -> Int
 solve' lo hi = length . filter (any (== 2) . digitCounts) . filter increasing .
                map show $ [lo..hi]
 #+END_SRC
+
+*** Day 5
+This one was trickier due to the fact that the new opcodes were
+handling input/output. Handling IO in a pure functional language as
+Haskell requires me to use a Monad. I am not very used to these so it
+wasn't immediately obvious to me how I would handle it in my existing
+implementation. After thinking for a while I figured that I could stop
+using =iterate= and make =exec= recursive with the signature =State ->
+IO ()= instead. That way I could feed the IO actions through the
+recursive calls.
+
+Here's how the first four instructions were implemented
+#+BEGIN_SRC haskell
+exec :: State -> IO ()
+exec s@(n, p) = case decode s of
+    Add p1 p2 (Param Pos t) -> return () >>
+                               exec (n + 4, mut p t (eval p p1 + eval p p2))
+    Mul p1 p2 (Param Pos t) -> return () >>
+                               exec (n + 4, mut p t (eval p p1 * eval p p2))
+    Inp (Param Pos t)       -> getLine >>=
+                               \x -> exec (n + 2, mut p t (read x))
+    Out p1                  -> putStrLn (show (eval p p1)) >>
+                               exec (n + 2, p)
+#+END_SRC
+
+Implementing the parameter modes were pretty straightforward and I
+added a few types to help me represent them.
+#+BEGIN_SRC haskell
+data Mode = Pos | Imm
+    deriving Show
+data Param = Param Mode Int
+    deriving Show
+data Instr = Add Param Param Param
+           | Mul Param Param Param
+           | Inp Param
+           | Out Param
+#+END_SRC
+
+Perhaps I really didn't need the IO monad after all, as I guess I
+could have sent the predefined input through another argument, and
+instead return the output instead of sending it to stdout. But this
+was educational, so I kept it like this.
