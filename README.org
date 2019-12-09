@@ -133,3 +133,8 @@ Perhaps I really didn't need the IO monad after all, as I guess I
 could have sent the predefined input through another argument, and
 instead return the output instead of sending it to stdout. But this
 was educational, so I kept it like this.
+
+*** Day 6
+Solution obtained by appropriately querying the lookup table provided
+as input. Performance is not great as it repeatedly does lookups in a
+list, but this is just a question of using a =Map= instead.
