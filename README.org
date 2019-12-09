@@ -138,3 +138,37 @@ was educational, so I kept it like this.
 Solution obtained by appropriately querying the lookup table provided
 as input. Performance is not great as it repeatedly does lookups in a
 list, but this is just a question of using a =Map= instead.
+
+*** Day 7
+This one was so much harder than the other ones due to the pure
+functional nature of Haskell. Here I needed to run the machine in
+cascade, feeding output from one amplifier as input into the next, in
+a feedback loop. So I needed to keep the execution state of all
+amplifiers simultaneously. To be able to run in lock-step, and feed
+input/output on demand, I changed the signature of =exec= yet again.
+#+BEGIN_SRC haskell
+exec :: State -> (StopReason, State)
+#+END_SRC
+
+Whenever I needed to interrupt the execution, I'd stop recursively
+executing =exec= and return the tuple with a reason for stopping,
+which could for instance be =Output=. Then, I'd store that value and
+feed it into the next amplifier.
+
+This worked pretty good actually and solve the problem, but the
+implementation of the cascading wasn't too beautiful.
+
+#+BEGIN_SRC haskell
+runCascade :: Prog -> [Int] -> Int
+runCascade p phases = f amps 0
+    where amps = [setupAmp p phase | phase <- phases]
+          f (amp:rest) nextInp = case exec amp of
+                (Halt, _)      -> nextInp
+                (Input, amp')  -> f (amp' { input=Just nextInp } : rest) nextInp
+                (Output, amp') -> f (rest ++ [amp']) (getOutput amp')
+#+END_SRC
+
+I needed to keep the state around and pass it back into =exec= every
+time. Perhaps that can be made more streamlined with help of the State
+Monad, but I've never used it nor do I know how to use it. Hopefully
+I'll learn it soon enough.
