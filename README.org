@@ -172,3 +172,8 @@ I needed to keep the state around and pass it back into =exec= every
 time. Perhaps that can be made more streamlined with help of the State
 Monad, but I've never used it nor do I know how to use it. Hopefully
 I'll learn it soon enough.
+
+*** Day 8
+I could identify that the operations on layers and pixels formed
+Monoids. So for practice, I made them both instances of that class.
+The =Layer= type became polymorphic, as it contained another Monoid.

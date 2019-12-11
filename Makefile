@@ -1,4 +1,4 @@
-all: day1 day2 day3 day4 day5 day6 day7
+all: day1 day2 day3 day4 day5 day6 day7 day8
 day1:
 	runhaskell day1.hs < day1.input
 day2:
@@ -14,5 +14,7 @@ day6:
 	runhaskell day6.hs < day6.input
 day7:
 	runhaskell day7.hs < day7.input
+day8:
+	runhaskell day8.hs < day8.input
 watch:
 	while inotifywait -e close_write day$(day).hs; do make day$(day); done
