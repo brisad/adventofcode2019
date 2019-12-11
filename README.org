@@ -177,3 +177,7 @@ I'll learn it soon enough.
 I could identify that the operations on layers and pixels formed
 Monoids. So for practice, I made them both instances of that class.
 The =Layer= type became polymorphic, as it contained another Monoid.
+
+*** Day 9
+Other than a few smaller mistakes while writing the solution, this day
+wasn't too hard when basing the code on what I already had from day 7.
