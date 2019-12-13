@@ -181,3 +181,13 @@ The =Layer= type became polymorphic, as it contained another Monoid.
 *** Day 9
 Other than a few smaller mistakes while writing the solution, this day
 wasn't too hard when basing the code on what I already had from day 7.
+
+*** Day 10
+This day took too long. I had problems with both easier and harder
+parts. The thing I like with Haskell is that it helps me find a
+simpler solution. When things start to look too complicated, which it
+did here, I need to rethink and try to find a solution that can be
+better expressed. The solution I ended up with could probably be
+simplified more, but I should move on to the next one now. Performance
+is bad on this one, but that's not something I care too much about
+here.
