@@ -191,3 +191,12 @@ better expressed. The solution I ended up with could probably be
 simplified more, but I should move on to the next one now. Performance
 is bad on this one, but that's not something I care too much about
 here.
+
+*** Day 11
+The code connecting the intcode computer to the robot is not pretty to
+look at, but it worked almost instantly. I think the type system
+helped a lot here so that when it compiled, it just worked. I learned
+about deriving from =Enum=, which gave me =fromEnum= and =toEnum=.
+
+I quite often find it hard to name things. Good names are often used
+by functions I have already defined earlier in the code.
