@@ -200,3 +200,24 @@ about deriving from =Enum=, which gave me =fromEnum= and =toEnum=.
 
 I quite often find it hard to name things. Good names are often used
 by functions I have already defined earlier in the code.
+
+*** Day 12
+Most time for this day were spent on learning how to parse the simple
+input file, containing lines like
+#+BEGIN_SRC
+<x=1, y=-4, z=3>
+#+END_SRC
+For that, I learned a bit more about parser generators, and more
+specifically, I used the built in module
+=Text.ParserCombinators.ReadP= which was really handy.  This is how
+the resulting parser for a vector ended up:
+
+#+BEGIN_SRC haskell
+instance Read Vec where
+  readsPrec _ = readP_to_S $
+    char '<' *> (Vec <$> (component 'x') <*> (component 'y') <*> (component 'z')) <* char '>'
+    where component c = char c *> char '=' *> number <* optional (string ", ")
+          number = do
+              sign <- option 1 (const (-1) <$> char '-')
+              (* sign) . read <$> many1 (satisfy isDigit)
+#+END_SRC
