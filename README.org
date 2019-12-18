@@ -221,3 +221,9 @@ instance Read Vec where
               sign <- option 1 (const (-1) <$> char '-')
               (* sign) . read <$> many1 (satisfy isDigit)
 #+END_SRC
+
+*** Day 13 and later
+I stopped here. While the problems were fun, I started to feel that
+this is not the best way to improve my Haskell knowledge. Better to
+take it slower and focus on learning more advanced concepts than
+solving tricky problems.
